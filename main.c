@@ -33,8 +33,16 @@ Int16 sampleBufferL[AUDIO_IO_SIZE];
 #pragma DATA_ALIGN(sampleBufferR,4)
 Int16 sampleBufferR[AUDIO_IO_SIZE];
 
+Int16 dirakBuff[AUDIO_IO_SIZE];
+Int16 izlaz[AUDIO_IO_SIZE];
+Int16 output1[4];
+Int16 history_x[AUDIO_IO_SIZE];
+Int16 history_y[AUDIO_IO_SIZE];
+
 void main( void )
 {   
+	int i;
+
     /* Inicijalizaija razvojne ploce */
     EZDSP5535_init( );
 
@@ -54,13 +62,31 @@ void main( void )
 
     aic3204_dma_init();
     
+    dirakBuff[0] = 16000;
+    history_x[0] = 0;
+    history_y[0] = 0;
+
+    for(i = 1; i < AUDIO_IO_SIZE; i++) {
+    	dirakBuff[i] = 0;
+    	history_x[i] = 0;
+    	history_y[i] = 0;
+    }
+
+
+
     /* Postavljanje vrednosti frekvencije odabiranja i pojacanja na kodeku */
     set_sampling_frequency_and_gain(SAMPLE_RATE, 0);
+
+    calculateShelvingCoeff(-0.3, output1);
+
 
     while(1)
     {
     	aic3204_read_block(sampleBufferL, sampleBufferR);
 
+    	for(i = 0; i<AUDIO_IO_SIZE; i++) {
+    		izlaz[i] = shelvingHP(dirakBuff[i], output1, history_x, history_y, 8192);
+    	}
     	/* Your code here */
 
 		aic3204_write_block(sampleBufferR, sampleBufferR);
