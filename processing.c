@@ -49,7 +49,7 @@ Int16 shelvingHP(Int16 input, Int16* coeff, Int16* x_history, Int16* y_history, 
 
 	input_a1 = first_order_IIR(input, coeff, x_history, y_history);
 
-	output = _smpy(((input>>1) + (input_a1>>1)), k) + (Int32)(input - input_a1)>>1;
+	output = _smpy(((input>>1) + (input_a1>>1)), k) + (Int32)((input>>1) - (input_a1>>1));
 
 	if(output > 32767) {
 		output = 32767;
@@ -69,7 +69,7 @@ Int16 shelvingLP(Int16 input, Int16* coeff, Int16* x_history, Int16* y_history, 
 
 	input_a1 = first_order_IIR(input, coeff, x_history, y_history);
 
-	output = _smpy((input - input_a1)>>1, k) + (Int32)((input>>1) + (input_a1>>1));
+	output = _smpy((input>>1) - (input_a1>>1), k) + (Int32)((input>>1) + (input_a1>>1));
 
 	if(output > 32767) {
 		output = 32767;
@@ -89,7 +89,7 @@ Int16 shelvingPeek(Int16 input, Int16* coeff, Int16* x_history, Int16* y_history
 
 	input_a2 = second_order_IIR(input, coeff, x_history, y_history);
 
-	output = _smpy((input - input_a2)>>1, k) + (Int32)((input>>1) + (input_a2>>1));
+	output = _smpy((input>>1) - (input_a2>>1), k) + (Int32)((input>>1) + (input_a2>>1));
 
 	if(output > 32767) {
 		output = 32767;
