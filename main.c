@@ -27,6 +27,8 @@
 
 #define PI 3.14159265
 
+float frekvencije[6] = {175, 660, 345, 2560, 660, 4000};
+
 /* Niz za smestanje ulaznih i izlaznih odbiraka */
 #pragma DATA_ALIGN(sampleBufferL,4)
 Int16 sampleBufferL[AUDIO_IO_SIZE];
@@ -36,6 +38,7 @@ Int16 sampleBufferR[AUDIO_IO_SIZE];
 Int16 dirakBuff[AUDIO_IO_SIZE];
 Int16 izlaz[AUDIO_IO_SIZE];
 Int16 output1[4];
+Int16 output2[6];
 Int16 history_x[AUDIO_IO_SIZE];
 Int16 history_y[AUDIO_IO_SIZE];
 
@@ -78,6 +81,7 @@ void main( void )
     set_sampling_frequency_and_gain(SAMPLE_RATE, 0);
 
     calculateShelvingCoeff(-0.3, output1);
+    calculatePeekCoeff(0.7, 0, output2);
 
 
     while(1)
@@ -85,7 +89,7 @@ void main( void )
     	aic3204_read_block(sampleBufferL, sampleBufferR);
 
     	for(i = 0; i<AUDIO_IO_SIZE; i++) {
-    		izlaz[i] = shelvingHP(dirakBuff[i], output1, history_x, history_y, 8192);
+    		izlaz[i] = shelvingPeek(dirakBuff[i], output2, history_x, history_y, 8192);
     	}
     	/* Your code here */
 

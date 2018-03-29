@@ -44,11 +44,12 @@ void calculatePeekCoeff(float c_alpha, float c_beta, Int16* output)
 Int16 shelvingHP(Int16 input, Int16* coeff, Int16* x_history, Int16* y_history, Int16 k)
 {
 
-	Int16 input_a1, output;
+	Int16 input_a1;
+	Int32 output;
 
 	input_a1 = first_order_IIR(input, coeff, x_history, y_history);
 
-	output = _smpy((input + input_a1)/2, k) + (input - input_a1)/2;
+	output = _smpy(((input>>1) + (input_a1>>1)), k) + (Int32)(input - input_a1)>>1;
 
 	if(output > 32767) {
 		output = 32767;
@@ -58,43 +59,45 @@ Int16 shelvingHP(Int16 input, Int16* coeff, Int16* x_history, Int16* y_history, 
 		output = -32768;
 	}
 
-	return output;
+	return (Int16)output;
 }
 
 Int16 shelvingLP(Int16 input, Int16* coeff, Int16* x_history, Int16* y_history, Int16 k)
 {
-	Int16 input_a1, output;
+	Int16 input_a1;
+	Int32 output;
 
-		input_a1 = first_order_IIR(input, coeff, x_history, y_history);
+	input_a1 = first_order_IIR(input, coeff, x_history, y_history);
 
-		output = _smpy((input - input_a1)/2, k) + (input + input_a1)/2;
+	output = _smpy((input - input_a1)>>1, k) + (Int32)((input>>1) + (input_a1>>1));
 
-		if(output > 32767) {
-			output = 32767;
-		}
+	if(output > 32767) {
+		output = 32767;
+	}
 
-		if(output < -32768) {
-			output = -32768;
-		}
+	if(output < -32768) {
+		output = -32768;
+	}
 
-		return output;
+	return (Int16)output;
 }
 
 Int16 shelvingPeek(Int16 input, Int16* coeff, Int16* x_history, Int16* y_history, Int16 k)
 {
-	Int16 input_a2, output;
+	Int16 input_a2;
+	Int32 output;
 
-			input_a2 = second_order_IIR(input, coeff, x_history, y_history);
+	input_a2 = second_order_IIR(input, coeff, x_history, y_history);
 
-			output = _smpy((input - input_a2)/2, k) + (input + input_a2)/2;
+	output = _smpy((input - input_a2)>>1, k) + (Int32)((input>>1) + (input_a2>>1));
 
-			if(output > 32767) {
-				output = 32767;
-			}
+	if(output > 32767) {
+		output = 32767;
+	}
 
-			if(output < -32768) {
-				output = -32768;
-			}
+	if(output < -32768) {
+		output = -32768;
+	}
 
-			return output;
+	return (Int16)output;
 }
