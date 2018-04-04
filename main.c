@@ -4,7 +4,7 @@
 // * Godina: 2017
 // *
 // * Zadatak: Ekvalizacija audio signala
-// * Autor:
+// * Autor:Bojan Strbac RA82/2015
 // *                                                                          
 // *                                                                          
 /////////////////////////////////////////////////////////////////////////////
@@ -66,7 +66,7 @@ Int16 history_y_P1_R[2] = {0, 0};
 Int16 history_x_P2_R[2] = {0, 0};
 Int16 history_y_P2_R[2] = {0, 0};
 
-Int16 k[4] = { 16000, 16000, 16000, 16000 };
+Int16 k[4] = { 8192, 8192, 8192, 8192 };
 int k_i = 0;
 
 
@@ -140,6 +140,7 @@ void main( void )
     calculatePeekCoeff(my_alpha[2], my_beta[1], shelvingPeekOutput2);
 
 
+
     while(1)
     {
     	aic3204_read_block(sampleBufferL, sampleBufferR);
@@ -164,12 +165,13 @@ void main( void )
 
     	for(i = 0; i<AUDIO_IO_SIZE; i++) {
 
-    		outputEQ_LEFT[i] = shelvingLP(sampleBufferL[i], shelvingLowOutput, history_x_LP_L, history_y_LP_L, k[0]);
+
+    		outputEQ_LEFT[i] = shelvingLP(dirakBuff[i], shelvingLowOutput, history_x_LP_L, history_y_LP_L, k[0]);
     		outputEQ_LEFT[i] = shelvingPeek(outputEQ_LEFT[i], shelvingPeekOutput1, history_x_P1_L, history_y_P1_L, k[1]);
     		outputEQ_LEFT[i] = shelvingPeek(outputEQ_LEFT[i], shelvingPeekOutput2, history_x_P2_L, history_y_P2_L, k[2]);
     		outputEQ_LEFT[i] = shelvingHP(outputEQ_LEFT[i], shelvingHighOutput, history_x_HP_L, history_y_HP_L, k[3]);
 
-			outputEQ_RIGHT[i] = shelvingLP(sampleBufferR[i], shelvingLowOutput, history_x_LP_R, history_y_LP_R, k[0]);
+			outputEQ_RIGHT[i] = shelvingLP(dirakBuff[i], shelvingLowOutput, history_x_LP_R, history_y_LP_R, k[0]);
 			outputEQ_RIGHT[i] = shelvingPeek(outputEQ_RIGHT[i], shelvingPeekOutput1, history_x_P1_R, history_y_P1_R, k[1]);
 			outputEQ_RIGHT[i] = shelvingPeek(outputEQ_RIGHT[i], shelvingPeekOutput2, history_x_P2_R, history_y_P2_R, k[2]);
 			outputEQ_RIGHT[i] = shelvingHP(outputEQ_RIGHT[i], shelvingHighOutput, history_x_HP_R, history_y_HP_R, k[3]);
